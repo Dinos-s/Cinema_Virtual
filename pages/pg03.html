@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="/JS/dist.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.0/dist/aframe-environment-component.min.js"></script>
     <title>COMÉDIA</title>
 </head>
 <body>
@@ -15,11 +16,11 @@
             <img id="masks" src="/images/mask_comedy.jpg">
 
             <!-- Porters -->
-            <img id="maePoster" src="/images/posters/poster-minha_mãe.jpg">
-            <img id="mae" src="/images/posters/minha_mãe.jpg">
+            <img id="maePoster" src="/images/posters/poster-minha_mãe.jpg" crossorigin="anonymous">
+            <img id="mae" src="/images/posters/minha_mãe.jpg" crossorigin="anonymous">
 
-            <img id="parcaPoster" src="/images/posters/poster-praças.png">
-            <img id="parca" src="/images/posters/os-parças-filme.jpg">
+            <img id="parcaPoster" src="/images/posters/poster-praças.png" crossorigin="anonymous">
+            <img id="parca" src="/images/posters/os-parças-filme.jpg" crossorigin="anonymous">
             
             <a-mixin
                 id="frame"
@@ -37,17 +38,118 @@
             ></a-mixin>
         </a-assets>
 
-        <a-camera>
+        <a-entity id="ui" position="0 1.6 -2.5">
+            <a-entity id="menu" highlight>
+                <a-entity id="parcaButton" position="-1.6 0 0" mixin="frame" class="raycastable menu-button">
+                    <a-entity material="src: #parcaPoster" mixin="poster"></a-entity>
+                </a-entity>
+
+                <a-entity id="maeButton" position="-0.8 0 0" mixin="frame" class="raycastable menu-button">
+                    <a-entity material="src: #maePoster" mixin="poster"></a-entity>
+                </a-entity>
+            </a-entity>
+            <!-- Info panel of the selected movie. -->
+            <a-entity id="infoPanel" position="-1.23 0 0.007" info-panel visible="false" button="true"
+                scale="0.001 0.001 0.001" geometry="primitive: plane; width: 1.55; height: 1.8"
+                material="color: #333333; shader: flat; transparent: false" class="raycastable">
+                <a-entity id="maeMovieImage" mixin="movieImage" material="src: #mae" visible="false"></a-entity>
+                <a-entity id="parcasMovieImage" mixin="movieImage" material="src: #parca" visible="false"></a-entity>
+                <a-entity id="movieTitle" position="-0.68 -0.1 0"
+                    text="shader: msdf; anchor: left; width: 1.5; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white; value: acao">
+                </a-entity>
+                <a-entity id="movieDescription" position="-0.68 -0.2 0"
+                    text="baseline: top; shader: msdf; anchor: left; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white;
+                    value: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">
+                </a-entity>
+                <cursor></cursor>
+            </a-entity>
+        </a-entity>
+
+        <a-camera position="0 2 -1">
             <a-cursor intersection-spawn="Event: click; mixin:voxel"></a-cursor>
         </a-camera>
 
         <a-sphere id="pg0" color="#CCC" src="#space" radius="3" position="5 0 -10"></a-sphere>
 
         <a-text font="kelsonsans" value="Menu Principal" width="6" position="3 3.4 -8" color="#000000" font-size="35px"></a-text>
-
     
         <a-sky src="#masks" rotation="0 -130 0"></a-sky>
     </a-scene>
-    <script src="/JS/script.js"></script>
+    <script>
+        let pg0 = document.querySelector("#pg0")
+        pg0.addEventListener("mouseenter", e=>{
+            location.href = "index.html"
+        })
+    </script>
+    <script>
+
+        const css = 'color: black; position: relative; z-index: 999999;top: 78%; left: 44.5%; display: none;';
+        const isCardOpened = false;
+    
+        let cardId = '';
+        let clickCount = 0;
+        let canv = document.getElementsByClassName('a-canvas')[0];
+    
+        function buildBtn(elementId, childrenElementId) {
+          let element = document.getElementById(elementId);
+          element.insertAdjacentHTML('beforeend', `<button id="${childrenElementId}" style="${css}" type="button" onclick="onClickBtn('${childrenElementId}')">Clique duas vezes para assistir!</button>`);
+          element.addEventListener("click", async e => {
+            e.preventDefault();
+            this.clickCount = 1;
+            this.isCardOpened = true;
+            this.cardId = childrenElementId;
+            removeDisplayNone(childrenElementId);
+          });
+        }
+    
+        function onClickBtn(element) {
+          switch (element) {
+            case 'parcasBtn': return osParcas();
+            case 'maePecaBtn': return minhaMaePeca();
+            default: return alert('Error');
+          }
+        }
+    
+        function addDisplayNone(elementId) {
+          let element = document.getElementById(elementId);
+          if (element) element.style.display = 'none';
+        }
+    
+        function removeDisplayNone(elementId) {
+          let element = document.getElementById(elementId);
+          if (element) element.style.removeProperty("display");
+        }
+    
+        canv.addEventListener('click', e => {
+          e.preventDefault();
+          let canvasClass = document.getElementsByClassName('a-mouse-cursor-hover');
+          this.clickCount = this.clickCount + 1;
+          if (canvasClass?.length > 0 && this.isCardOpened && this.clickCount > 2) {
+            this.isCardOpened = false;
+            this.clickCount = 0;
+            return addDisplayNone(this.cardId);
+          }
+        });
+    
+        buildBtn('autoDaCompadecidaButton', 'autoDaCompadecidaBtn');
+        buildBtn('palhacoButton', 'minhaMaePeca');
+    
+        function osParcas() {
+          let autoDaCompadecida = document.querySelector("#autoDaCompadecidaBtn")
+          autoDaCompadecida.addEventListener("click", e=>{
+                location.href = "osParcas.html"
+            })
+        }
+    
+        function minhaMaePeca() {
+          let palhaco = document.querySelector("#minhaMaePeca")
+          palhaco.addEventListener("click", e=>{
+                location.href = "minhaMaePeca.html"
+            })
+        }
+      </script>
 </body>
 </html>

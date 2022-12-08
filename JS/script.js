@@ -1,8 +1,3 @@
-let pg0 = document.querySelector("#pg0")
-pg0.addEventListener("mouseenter", e=>{
-    location.href = "index.html"
-})
-
 let pg2 = document.querySelector("#pg2")
 pg2.addEventListener("mouseenter", e=>{
     location.href = "pg02.html"
