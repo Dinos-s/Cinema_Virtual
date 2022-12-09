@@ -2,7 +2,7 @@
 Um cinema divido em 4 categorias, utilizando o A-frame para dar ao usuário para um experiênca diferente, de assistir os filmes de forma mais interativa;
 
 # Vídeo de demonstrção
-![Image](https://github.com/Dinos-s/Cinema_Virtual/blob/master/images/modelos/video.mp4 "Vídeo Demonstrativo")
+![Watch the video](https://github.com/Dinos-s/Cinema_Virtual/blob/master/images/modelos/video.mp4 "Vídeo Demonstrativo")
 
 ## Categorias
 ![Image](https://github.com/Dinos-s/Cinema_Virtual/blob/master/images/modelos/modelo.png "modelo")
